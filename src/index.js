@@ -112,7 +112,12 @@ import './index.css';
         });
     }
 
-    jumpTo(step) {
+    jumpTo(e) {
+
+        let step;
+
+        step = e.target.value;
+
         this.setState({
             stepNumber: step,
             xIsNext: (step % 2) === 0,
@@ -128,9 +133,7 @@ import './index.css';
         const moves = history.map((step, move) => {
             const desc  = move ? 'Go to move #' + move : 'Go to game start';
             return (
-                <li key={move}>
-                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
-                </li>
+                <option key={move} value={move}>{desc}</option>
             );
         });
 
@@ -141,7 +144,7 @@ import './index.css';
         } else {
           status = 'Next player: ' + this.getNextPlayer();
         }
-    
+
         return (
           <div className="game">
             <div className="game-board">
@@ -153,7 +156,7 @@ import './index.css';
             </div>
             <div className="game-info">
               <div>{status}</div>
-              <ol>{moves}</ol>
+              <select id="move_list" onChange={e => this.jumpTo(e)} value={this.state.stepNumber}>{moves}</select>
             </div>
           </div>
         );
