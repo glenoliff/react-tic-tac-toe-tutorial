@@ -3,18 +3,41 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
   function Square(props) {
+
+    const clsName = 'square' + (props.currentMove ? ' square-current-move' : '');
+
       return (
-        <button className="square" onClick={() => props.onClick()}>
+        <button className={clsName} onClick={() => props.onClick()}>
           {props.value}
         </button>
       );
   }
 
-  class Board extends React.Component {
+  function getRowNum(i) {
+
+    if (i < 3) {
+        return 0;
+    } else if (i < 6) {
+        return 1;
+    } else {
+        return 2;
+    }
+}
+
+function getColNum(i) {
+    return (i % 3);
+}
+
+class Board extends React.Component {
 
     renderSquare(i) {
+
+      const rowMatches = this.props.row === getRowNum(i);
+      const colMatches = this.props.col === getColNum(i);
+
       return (
         <Square 
+            currentMove={rowMatches && colMatches}
             value={this.props.squares[i]} 
             onClick={() => this.props.onClick(i)}
         />
@@ -89,28 +112,28 @@ import './index.css';
         return (this.state.xIsNext ? 'X' : 'O');
     }
 
-    getRowNum(i) {
+    // getRowNum(i) {
 
-        if (i < 3) {
-            return 0;
-        } else if (i < 6) {
-            return 1;
-        } else {
-            return 2;
-        }
-    }
+    //     if (i < 3) {
+    //         return 0;
+    //     } else if (i < 6) {
+    //         return 1;
+    //     } else {
+    //         return 2;
+    //     }
+    // }
 
-    getColNum(i) {
-        return (i % 3);
-    }
+    // getColNum(i) {
+    //     return (i % 3);
+    // }
 
     handleClick(i) {
 
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const newSquares = current.squares.slice();
-        const rowNum = this.getRowNum(i);
-        const colNum = this.getColNum(i);
+        const rowNum = getRowNum(i);
+        const colNum = getColNum(i);
 
         // Don't allow clicks in areas if the games already over or 
         // if the square has already been clicked on
@@ -171,6 +194,8 @@ import './index.css';
           <div className="game">
             <div className="game-board">
               <Board
+                row={current.row}
+                col={current.col}
                 squares={current.squares}
                 onClick={(i) => this.handleClick(i)}
               />
