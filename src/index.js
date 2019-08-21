@@ -89,11 +89,28 @@ import './index.css';
         return (this.state.xIsNext ? 'X' : 'O');
     }
 
+    getRowNum(i) {
+
+        if (i < 3) {
+            return 0;
+        } else if (i < 6) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    getColNum(i) {
+        return (i % 3);
+    }
+
     handleClick(i) {
 
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const newSquares = current.squares.slice();
+        const rowNum = this.getRowNum(i);
+        const colNum = this.getColNum(i);
 
         // Don't allow clicks in areas if the games already over or 
         // if the square has already been clicked on
@@ -106,6 +123,8 @@ import './index.css';
         this.setState({
             history: history.concat([{
                 squares: newSquares,
+                row: rowNum,
+                col: colNum,
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
@@ -130,8 +149,11 @@ import './index.css';
         const current = history[this.state.stepNumber];
         const winner = this.calculateWinner(current.squares);
 
+        // debugger;
+
         const moves = history.map((step, move) => {
-            const desc  = move ? 'Go to move #' + move : 'Go to game start';
+            const desc  = move ? 'Go to move #' + move + ' (' + history[move].row + ', ' + history[move].col + ')' 
+                               : 'Go to game start';
             return (
                 <option key={move} value={move}>{desc}</option>
             );
